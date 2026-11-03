@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Protótipo - Sistema de Entregas</title>
+<style>
+:root{--bg:#070d1a;--panel:#0e1627;--card:#131d33;--card2:#1a2642;--line:#22304f;--txt:#e8eefc;--mut:#8a98b8;--blue:#0a84d6;--green:#22c55e;--amber:#f59e0b;--red:#ef4444;--purple:#8b5cf6;--orange:#fb923c}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.top{padding:14px 16px 0;max-width:1180px;margin:0 auto}
+.top h1{font-size:17px;font-weight:700}
+.top p{color:var(--mut);margin-top:4px;line-height:1.45;max-width:760px}
+.roles{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 6px}
+.role{padding:9px 14px;border-radius:999px;background:var(--panel);border:1px solid var(--line);color:var(--mut);font-weight:600}
+.role.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.guide{margin:8px 0 0;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;color:var(--mut);line-height:1.55}
+.guide summary{cursor:pointer;color:var(--txt);font-weight:600}
+.guide ol{margin:8px 0 2px 18px}
+#stage{max-width:1180px;margin:14px auto 40px;padding:0 16px}
+.center{display:flex;flex-direction:column;align-items:center}
+.split{display:flex;gap:28px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
+.explain{width:360px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;position:sticky;top:16px;line-height:1.5}
+.explain .tag{display:inline-block;background:rgba(10,132,214,.18);color:#7cc4f5;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.explain h3{font-size:19px;margin-bottom:4px}
+.explain p{color:var(--mut);margin-bottom:12px}
+.explain ul{margin:0 0 14px 18px}
+.explain li{margin-bottom:8px}
+.explain .who{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--mut)}
+.addr{display:flex;align-items:center;gap:8px;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:7px 10px;margin-bottom:8px;max-width:406px}
+.addr.wide{max-width:none}
+.addr input{flex:1;background:transparent;border:0;outline:0;color:var(--txt);min-width:0}
+.addr span{color:var(--mut);font-size:12px;white-space:nowrap}
+.addr .lock{color:var(--green)}
+.cap{color:var(--mut);font-size:12px;margin-top:10px;max-width:406px;text-align:center;line-height:1.45}
+.phone{width:390px;max-width:100%;height:min(780px,calc(100vh - 170px));min-height:560px;border:8px solid #1b2540;border-radius:32px;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;position:relative}
+.hd{height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid var(--line);background:#0a1224}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;letter-spacing:.2px}
+.logo i{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#0a84d6,#22c55e);display:grid;place-items:center;font-style:normal;font-size:13px}
+.logo b{color:var(--blue)}
+.av{width:34px;height:34px;border-radius:50%;background:var(--card2);border:2px solid var(--purple);display:grid;place-items:center;font-weight:700;font-size:12px}
+.scroll{flex:1;overflow:auto;position:relative}
+.nav{height:64px;flex:none;display:flex;align-items:center;justify-content:space-around;border-top:1px solid var(--line);background:#0a1224;padding:0 8px}
+.nav button{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--mut);font-size:11px;padding:6px 10px;border-radius:12px}
+.nav button.on{color:var(--blue)}
+.nav .wal{flex-direction:row;gap:8px;background:var(--blue);color:#fff;font-weight:700;font-size:14px;padding:10px 14px;border-radius:12px}
+.nav .wal.on{outline:2px solid #7cc4f5}
+.pad{padding:16px}
+h2{font-size:22px;font-weight:800}
+.sub{color:var(--mut);margin-top:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.row{display:flex;align-items:center;gap:10px}
+.sp{justify-content:space-between}
+.mut{color:var(--mut)}
+.small{font-size:12px}
+.btn{background:var(--blue);color:#fff;font-weight:700;padding:13px 16px;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 18px rgba(10,132,214,.25)}
+.btn.block{display:flex;width:100%}
+.btn.sec{background:var(--card2);box-shadow:none;color:var(--txt)}
+.btn.red{background:#7f1d1d;box-shadow:none}
+.btn.green{background:#15803d;box-shadow:none}
+.btn.sm{padding:8px 12px;border-radius:10px;font-size:13px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.chips{display:flex;gap:6px;padding:8px 10px;overflow:hidden;position:absolute;top:0;left:0;right:0;z-index:2}
+.chip{flex:1;min-width:0;background:rgba(19,29,51,.92);border:1px solid var(--line);border-radius:14px;padding:8px 4px;text-align:center}
+.chip b{display:block;font-size:20px;line-height:1.1}
+.chip span{font-size:8.5px;font-weight:700;letter-spacing:.3px}
+.map{width:100%;height:340px;display:block;background:#0c1426}
+.mapwrap{position:relative}
+.mapwrap.big .map{height:400px}
+.fab{position:sticky;bottom:12px;display:flex;justify-content:center;pointer-events:none;margin-top:-62px;height:62px;align-items:flex-end}
+.fab .btn{pointer-events:auto;padding:14px 26px;font-size:16px}
+.pill{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700}
+.ord{display:flex;gap:10px;align-items:center;padding:12px;border-radius:14px;background:var(--card);border:1px solid var(--line);margin-top:8px;text-align:left;width:100%}
+.ord .ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:rgba(10,132,214,.15);color:var(--blue);flex:none}
+.sheet{position:absolute;inset:0;background:rgba(3,6,14,.72);z-index:20;display:flex;align-items:flex-end}
+.sheet .in{width:100%;max-height:92%;overflow:auto;background:var(--panel);border-top-left-radius:22px;border-top-right-radius:22px;padding:18px;border-top:1px solid var(--line)}
+.sheet .grab{width:42px;height:4px;border-radius:4px;background:var(--line);margin:-6px auto 14px}
+label{display:block;font-size:12px;color:var(--mut);margin:12px 0 5px;font-weight:600}
+input[type=text],input[type=number],input[type=tel],select,textarea{width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;outline:0}
+input:focus,select:focus,textarea:focus{border-color:var(--blue)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{padding:8px 13px;border-radius:12px;background:var(--card);border:1px solid var(--line);color:var(--mut);font-weight:600}
+.seg button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.bal{font-size:44px;font-weight:800;letter-spacing:-1px;margin-top:6px}
+.bal small{font-size:24px;color:var(--mut);margin-right:4px}
+.tx{border-top:1px solid var(--line);padding:11px 0}
+.tx:first-child{border-top:0}
+.pos{color:var(--green)}.neg{color:var(--red)}
+.metric{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.metric:first-of-type{border-top:0}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:8px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#0f2a1a;border:1px solid #166534;color:#bbf7d0;padding:11px 18px;border-radius:12px;z-index:99;box-shadow:0 8px 30px rgba(0,0,0,.5);max-width:90vw}
+.toast.err{background:#2a0f0f;border-color:#7f1d1d;color:#fecaca}
+.blocked{display:grid;place-items:center;text-align:center;padding:30px;height:100%}
+.blocked .big{font-size:56px;font-weight:800;color:var(--red)}
+.blocked code{background:var(--card);padding:3px 8px;border-radius:8px;color:var(--amber)}
+.mb{transition:transform 1.8s linear}
+.pulse{animation:pl 1.6s ease-in-out infinite}
+@keyframes pl{0%,100%{opacity:1}50%{opacity:.45}}
+/* desktop */
+.desk{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;min-height:640px}
+.side{width:210px;flex:none;border-right:1px solid var(--line);padding:14px 10px;background:#0a1224}
+.side .logo{padding:4px 8px 14px}
+.side button{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:10px;color:var(--mut);font-weight:600;text-align:left;margin-bottom:2px}
+.side button.on{background:var(--card2);color:var(--txt)}
+.side .badge{margin-left:auto;background:var(--amber);color:#111;border-radius:999px;padding:1px 7px;font-size:11px;font-weight:800}
+.main{flex:1;padding:20px;min-width:0;overflow:auto}
+.grid{display:grid;gap:12px}
+.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:1fr 1fr}
+.kpi .v{font-size:26px;font-weight:800;margin-top:4px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;color:var(--mut);font-size:12px;font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.ro{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);color:#fcd34d;padding:9px 12px;border-radius:12px;margin-bottom:14px;font-weight:600}
+.bars{display:flex;align-items:flex-end;gap:10px;height:130px;margin-top:10px}
+.bars div{flex:1;background:linear-gradient(var(--blue),#0a4c7a);border-radius:6px 6px 0 0;position:relative;min-height:4px}
+.bars div span{position:absolute;top:-18px;left:0;right:0;text-align:center;font-size:11px;color:var(--mut)}
+.bars div i{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-size:11px;color:var(--mut);font-style:normal}
+.inl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.inl input{width:110px;padding:8px 10px}
+.inl input.w{width:180px}
+@media(max-width:820px){.desk{flex-direction:column}.side{width:auto;display:flex;overflow:auto;border-right:0;border-bottom:1px solid var(--line)}.side .logo{display:none}.side button{width:auto;white-space:nowrap}.g4,.g3,.g2{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>Protótipo clicável - Sistema de Entregas</h1>
+  <p>Dados fictícios, só para validar o fluxo. Tudo conversa entre as telas: o que o lojista pede aparece para o motoboy, o chefe e o dono, e os números do dono se atualizam.</p>
+  <div class="roles" id="roles"></div>
+  <details class="guide"><summary>Roteiro de teste (2 minutos)</summary>
+    <ol>
+      <li><b>Lojista:</b> toque em "Nova entrega", preencha e peça o motoboy. Depois abra "Depositar" e simule um Pix.</li>
+      <li><b>Chefe:</b> aba "Gestão", atribua o pedido a um motoboy (ou deixe para um motoboy aceitar).</li>
+      <li><b>Motoboy:</b> aceite o pedido e avance as etapas até "Entreguei". Volte ao Lojista e veja o mapa se mexer.</li>
+      <li><b>Dono:</b> aprove cadastros, associe um "Pix não identificado", marque um repasse como pago.</li>
+      <li><b>Bloqueio:</b> em qualquer perfil, troque o endereço na barra (ex.: <code>/boss/painel</code> no perfil Motoboy) e tecle Enter.</li>
+    </ol>
+  </details>
+</div>
+<div id="stage"></div>
+<script>
+/* ---------- util ---------- */
+const brl=v=>'R$ '+Number(v).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+const hora=()=>new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+const $=s=>document.querySelector(s);
+const ST={buscando:['Buscando','#f59e0b'],aceito:['Indo coletar','#0a84d6'],aguardando:['Aguardando coleta','#fb923c'],em_rota:['Em rota','#8b5cf6'],retornando:['Retornando','#f59e0b'],concluido:['Concluído','#22c55e'],cancelado:['Cancelado','#ef4444']};
+const ATIVOS=['buscando','aceito','aguardando','em_rota','retornando'];
+const I={
+ send:'<path d="M3 12l18-9-9 18-2-7z"/>',bars:'<path d="M5 20V10M12 20V4M19 20v-7"/>',
+ wallet:'<path d="M3 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM3 7l2-3h12M17 14h2"/>',
+ home:'<path d="M3 11l9-8 9 8M5 10v10h14V10"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M17 5a3.5 3.5 0 0 1 0 7M22 20c0-3-2-4.5-4-5"/>',
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',
+ shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',pix:'<path d="M12 3l9 9-9 9-9-9zM8 12l4-4 4 4-4 4z"/>',
+ file:'<path d="M6 3h8l5 5v13H6zM14 3v5h5M9 13h6M9 17h6"/>',pay:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/>',
+ box:'<path d="M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"/>',phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+ eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',map:'<path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14"/>',
+ check:'<path d="M5 12l5 5 9-10"/>',plus:'<path d="M12 5v14M5 12h14"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>'
+};
+const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
+const ini=n=>n.split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase();
+function toast(m,err){const t=document.createElement('div');t.className='toast'+(err?' err':'');t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2600)}
+
+/* ---------- estado ---------- */
+const STORE={x:150,y:215};
+const MB_POS={'Wester Dario':{x:55,y:70},'Carlos Lima':{x:310,y:340},'Joana Reis':{x:70,y:340},'Pedro Alves':{x:320,y:60}};
+const DESTS=[
+ {a:'Rua das Acácias, 245 - Santa Vitória',x:250,y:95},{a:'Av. Brasil, 1020 - Centro',x:290,y:200},
+ {a:'Rua do Canal, 88 - Jardim Europa',x:90,y:110},{a:'Rua Goiás, 560 - Planalto',x:215,y:320},{a:'Rua Minas Gerais, 33 - Bela Vista',x:60,y:260}
+];
+const S={
+ cfg:{preco:6,motoboy:5,minimo:20},
+ lojistas:[{nome:'Bruna Sousa Doces',saldo:96.08,ok:true},{nome:'Lanches do Zé',saldo:143,ok:true},{nome:'Mercado Bom Preço',saldo:12.5,ok:true}],
+ pendLojistas:['Padaria Pão Quente','Farmácia Central'],
+ motoboys:[{nome:'Wester Dario',online:true},{nome:'Carlos Lima',online:true},{nome:'Joana Reis',online:true,chefe:true},{nome:'Pedro Alves',online:false}],
+ pendMotoboys:['Rafael Moura','Ana Beatriz'],
+ repasse:{'Wester Dario':48,'Carlos Lima':35,'Joana Reis':60,'Pedro Alves':0},
+ pagos:[],
+ orders:[
+  {id:968474,cliente:'Marcos Paulo',tel:'(34) 99111-0001',end:DESTS[1].a,retorno:false,status:'em_rota',motoboy:'Wester Dario',valor:6,vMb:5,taxa:1,dest:DESTS[1],p0:MB_POS['Wester Dario'],prog:.35,hora:'14:27'},
+  {id:968471,cliente:'Lúcia Ramos',tel:'(34) 99111-0002',end:DESTS[0].a,retorno:false,status:'concluido',motoboy:'Carlos Lima',valor:6,vMb:5,taxa:1,dest:DESTS[0],p0:MB_POS['Carlos Lima'],prog:1,hora:'13:50'},
+  {id:968470,cliente:'Paulo Dias',tel:'(34) 99111-0003',end:DESTS[2].a,retorno:true,status:'concluido',motoboy:'Wester Dario',valor:6,vMb:5,taxa:1,dest:DESTS[2],p0:MB_POS['Wester Dario'],prog:1,hora:'13:10'}
+ ],
+ extrato:[
+  {dia:'hoje',hora:'14:27',tipo:'entrega',desc:'Entrega #968474',valor:-6},
+  {dia:'hoje',hora:'13:50',tipo:'entrega',desc:'Entrega #968471',valor:-6},
+  {dia:'ontem',hora:'18:02',tipo:'deposito',desc:'Depósito via Pix',valor:50},
+  {dia:'ontem',hora:'12:40',tipo:'entrega',desc:'Entrega #968402',valor:-6}
+ ],
+ pix:[{id:1,nome:'JOAO P SILVA',doc:'***.452.118-**',valor:30,hora:'09:12'},{id:2,nome:'MERCEARIA SANTOS ME',doc:'**.114.220/****-**',valor:100,hora:'11:47'}],
+ audit:[
+  {t:'14:27',quem:'Bruna Sousa Doces',acao:'Criou o pedido #968474'},
+  {t:'14:02',quem:'Dono',acao:'Aprovou o cadastro de Carlos Lima'},
+  {t:'11:47',quem:'Sistema',acao:'Pix de R$ 100,00 recebido sem identificação'},
+  {t:'09:12',quem:'Sistema',acao:'Pix de R$ 30,00 recebido sem identificação'}
+ ],
+ base:{concl:139,canc:3,hoje:41,dias:[38,45,41,52,47,43]},
+ filtro:'Este mês',nextId:968475
+};
+const BRUNA=S.lojistas[0];
+const R={lojista:{tab:'entrega',sheet:null,blocked:null},motoboy:{tab:'inicio',me:'Carlos Lima',blocked:null},chefe:{tab:'inicio',me:'Joana Reis',blocked:null},dono:{tab:'painel',blocked:null}};
+let role='lojista';
+const log=(quem,acao)=>S.audit.unshift({t:hora(),quem,acao});
+const ativas=()=>S.orders.filter(o=>ATIVOS.includes(o.status));
+const concl=()=>S.orders.filter(o=>o.status==='concluido');
+const taxa=()=>S.cfg.preco-S.cfg.motoboy;
+
+/* ---------- mapa ---------- */
+function pos(o){
+ const l=(a,b,t)=>({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t});
+ if(o.status==='aceito')return l(o.p0,STORE,o.prog);
+ if(o.status==='aguardando')return STORE;
+ if(o.status==='em_rota')return l(STORE,o.dest,o.prog);
+ if(o.status==='retornando')return l(o.dest,STORE,o.prog);
+ return null;
+}
+function mapSVG(orders,opt={}){
+ let g='<rect width="360" height="420" fill="#0c1426"/>';
+ g+='<ellipse cx="60" cy="170" rx="46" ry="30" fill="#10261f"/><ellipse cx="300" cy="260" rx="40" ry="34" fill="#10261f"/><ellipse cx="200" cy="390" rx="70" ry="24" fill="#10261f"/>';
+ for(let x=30;x<=330;x+=60)g+=`<line x1="${x}" y1="0" x2="${x}" y2="420" stroke="#18233d" stroke-width="5"/>`;
+ for(let y=40;y<=400;y+=60)g+=`<line x1="0" y1="${y}" x2="360" y2="${y}" stroke="#18233d" stroke-width="5"/>`;
+ g+='<line x1="0" y1="350" x2="360" y2="120" stroke="#2a3a2a" stroke-width="7"/><line x1="40" y1="0" x2="180" y2="420" stroke="#223049" stroke-width="7"/>';
+ g+='<text x="196" y="372" fill="#4b5d82" font-size="10">BR-365</text><text x="82" y="36" fill="#4b5d82" font-size="10">Rua do Canal</text>';
+ const dests=orders.filter(o=>ATIVOS.includes(o.status));
+ dests.forEach(o=>{g+=`<g transform="translate(${o.dest.x},${o.dest.y})"><circle r="7" fill="#ef4444"/><circle r="2.6" fill="#fff"/></g>`});
+ g+=`<g transform="translate(${STORE.x},${STORE.y})"><circle r="17" fill="#6d28d9" stroke="#c4b5fd" stroke-width="3"/><text y="5" text-anchor="middle" fill="#fff" font-weight="800" font-size="13">L</text></g>`;
+ if(opt.idle)S.motoboys.filter(m=>m.online&&!S.orders.some(o=>o.motoboy===m.nome&&ATIVOS.includes(o.status))).forEach(m=>{const p=MB_POS[m.nome];g+=`<g transform="translate(${p.x},${p.y})"><circle r="8" fill="#16a34a" stroke="#bbf7d0" stroke-width="2"/><text y="22" text-anchor="middle" fill="#86efac" font-size="9">${m.nome.split(' ')[0]}</text></g>`});
+ dests.forEach(o=>{const p=pos(o);if(!p)return;g+=`<g class="mb" data-oid="${o.id}" style="transform:translate(${p.x}px,${p.y}px)"><circle r="10" fill="#0a84d6" stroke="#bae0ff" stroke-width="2.5"/><circle r="3.5" fill="#fff"/><text y="24" text-anchor="middle" fill="#bae0ff" font-size="9.5" font-weight="700">${(o.motoboy||'').split(' ')[0]}</text></g>`});
+ return `<svg class="map" viewBox="0 0 360 420" preserveAspectRatio="xMidYMid slice">${g}</svg>`;
+}
+setInterval(()=>{
+ let ch=false;
+ S.orders.forEach(o=>{if(['aceito','em_rota','retornando'].includes(o.status)&&o.prog<1){o.prog=Math.min(1,o.prog+.1);ch=true}});
+ if(ch)document.querySelectorAll('.mb').forEach(el=>{const o=S.orders.find(x=>x.id==el.dataset.oid);const p=o&&pos(o);if(p)el.style.transform=`translate(${p.x}px,${p.y}px)`});
+},1800);
+
+/* ---------- regras ---------- */
+const PROX={aceito:'aguardando',aguardando:'em_rota',em_rota:null,retornando:'concluido'};
+function setStatus(o,st){o.status=st;o.prog=0;if(o.motoboy)o.p0=MB_POS[o.motoboy];if(st==='concluido'){S.repasse[o.motoboy]=(S.repasse[o.motoboy]||0)+o.vMb}}
+function criarPedido(f){
+ if(BRUNA.saldo<S.cfg.preco)return false;
+ const d=DESTS.find(x=>x.a===f.end)||DESTS[Math.floor(Math.random()*DESTS.length)];
+ const o={id:S.nextId++,cliente:f.cliente,tel:f.tel,end:f.end,obs:f.obs,retorno:f.retorno,status:'buscando',motoboy:null,valor:S.cfg.preco,vMb:S.cfg.motoboy,taxa:taxa(),dest:d,p0:{x:300,y:340},prog:0,hora:hora()};
+ S.orders.unshift(o);BRUNA.saldo-=o.valor;
+ S.extrato.unshift({dia:'hoje',hora:o.hora,tipo:'entrega',desc:'Entrega #'+o.id,valor:-o.valor});
+ log(BRUNA.nome,'Criou o pedido #'+o.id);return true;
+}
+function cancelar(o,estorna,quem){
+ o.status='cancelado';
+ if(estorna){BRUNA.saldo+=o.valor;S.extrato.unshift({dia:'hoje',hora:hora(),tipo:'estorno',desc:'Estorno #'+o.id,valor:o.valor})}
+ log(quem,'Cancelou o pedido #'+o.id+(estorna?' com estorno':' sem estorno'));
+}
+function qrSVG(seed){
+ let h=0;for(const c of String(seed))h=(h*31+c.charCodeAt(0))>>>0;const rnd=()=>{h=(h*1664525+1013904223)>>>0;return h/4294967296};
+ const n=25,s=6;let r='';
+ const finder=(x,y)=>`<rect x="${x*s}" y="${y*s}" width="${7*s}" height="${7*s}" fill="#000"/><rect x="${(x+1)*s}" y="${(y+1)*s}" width="${5*s}" height="${5*s}" fill="#fff"/><rect x="${(x+2)*s}" y="${(y+2)*s}" width="${3*s}" height="${3*s}" fill="#000"/>`;
+ for(let y=0;y<n;y++)for(let x=0;x<n;x++){const inF=(x<8&&y<8)||(x>16&&y<8)||(x<8&&y>16);if(!inF&&rnd()>.52)r+=`<rect x="${x*s}" y="${y*s}" width="${s}" height="${s}" fill="#000"/>`}
+ return `<svg viewBox="0 0 ${n*s} ${n*s}" width="190" height="190" style="background:#fff;padding:8px;border-radius:12px"><rect width="${n*s}" height="${n*s}" fill="#fff"/>${r}${finder(0,0)}${finder(18,0)}${finder(0,18)}</svg>`;
+}
+
+/* ---------- acesso por URL (simulação) ---------- */
+const AREAS={'/comerciantes':['lojista'],'/motoboys-chefe':['chefe'],'/motoboys':['motoboy','chefe'],'/boss':['dono']};
+const HOME={lojista:'/comerciantes/entrega',motoboy:'/motoboys/inicio',chefe:'/motoboys/inicio',dono:'/boss/painel'};
+const NOME={lojista:'Lojista',motoboy:'Motoboy',chefe:'Motoboy-chefe',dono:'Dono'};
+function pathOf(){
+ const t=R[role].tab;
+ if(role==='lojista')return '/comerciantes/'+({entrega:'entrega',carteira:'carteira',resultados:'resultados'}[t]);
+ if(role==='motoboy')return '/motoboys/'+t;
+ if(role==='chefe')return t==='gestao'?'/motoboys-chefe/gestao':'/motoboys/'+t;
+ if(role==='dono')return '/boss/'+t;
+}
+function irPara(raw){
+ let p=raw.trim().replace(/^https?:\/\/[^/]+/,'').replace(/\/+$/,'');if(!p.startsWith('/'))p='/'+p;
+ const pre=Object.keys(AREAS).sort((a,b)=>b.length-a.length).find(k=>p===k||p.startsWith(k+'/'));
+ const st=R[role];
+ if(!pre){st.blocked={p,code:404};return}
+ if(!AREAS[pre].includes(role)){st.blocked={p,code:403};log('Sistema','ACESSO NEGADO: '+NOME[role]+' tentou abrir '+p);return}
+ st.blocked=null;const seg=p.split('/')[2];
+ const tabs={lojista:['entrega','carteira','resultados'],motoboy:['inicio','ganhos','perfil'],chefe:['inicio','ganhos','perfil','gestao'],dono:['painel','pedidos','lojistas','motoboys','depositos','repasses','config','relatorios']};
+ if(seg&&tabs[role].includes(seg))st.tab=seg;
+}
+function addr(wide,app){
+ const dom='nome-do-sistema.com';
+ return `<div class="addr ${wide?'wide':''}"><span class="lock">${app?'APP':'https'}</span><span>${app?'rota interna':dom}</span><input id="addr" value="${pathOf()}" spellcheck="false" aria-label="Endereço"></div>`;
+}
+function bloqueio(){
+ const b=R[role].blocked;
+ return `<div class="blocked"><div><div class="big">${b.code}</div>
+ <h2 style="margin:6px 0 8px">${b.code===403?'Acesso negado':'Página não encontrada'}</h2>
+ <p class="mut" style="line-height:1.5;max-width:340px;margin:0 auto 14px">${b.code===403?`O perfil <b>${NOME[role]}</b> não tem permissão para abrir <code>${b.p}</code>. A API também recusou o pedido, então nenhum dado foi enviado.`:`Não existe nada em <code>${b.p}</code>.`}</p>
+ ${b.code===403?'<p class="small mut" style="margin-bottom:14px">Tentativa registrada no histórico de auditoria.</p>':''}
+ <button class="btn" data-act="voltar">Voltar para a minha área</button></div></div>`;
+}
+
+/* ---------- telas: lojista ---------- */
+function lojistaView(){
+ const st=R.lojista,t=st.tab,os=S.orders;
+ const c=k=>os.filter(o=>o.status===k).length;
+ let body='';
+ if(t==='entrega'){
+  const lista=os.filter(o=>ATIVOS.includes(o.status));
+  body=`<div class="mapwrap">
+   <div class="chips">
+    ${[['Buscando',c('buscando'),'#f59e0b'],['Aguardando',c('aceito')+c('aguardando'),'#fb923c'],['Em rota',c('em_rota'),'#0a84d6'],['Retornando',c('retornando'),'#f59e0b'],['Concluído',c('concluido'),'#22c55e']].map(x=>`<div class="chip"><b style="color:${x[2]}">${x[1]}</b><span style="color:${x[2]}">${x[0].toUpperCase()}</span></div>`).join('')}
+   </div>${mapSVG(os)}</div>
+   <div class="pad" style="padding-bottom:84px"><div class="row sp"><b>Entregas ativas</b><span class="mut small">${lista.length} agora</span></div>
+   ${lista.length?lista.map(o=>ordRow(o,'verPedido')).join(''):'<div class="card mut" style="margin-top:8px;text-align:center">Nenhuma entrega ativa. Toque em "Nova entrega".</div>'}
+   </div><div class="fab"><button class="btn" data-act="nova">${ic('plus',18)} Nova entrega</button></div>`;
+ }
+ if(t==='carteira'){
+  let ex=S.extrato;if(S.filtro==='Hoje')ex=ex.filter(e=>e.dia==='hoje');if(S.filtro==='Mês passado')ex=[];
+  const grupos=['hoje','ontem'].map(d=>({d,l:ex.filter(e=>e.dia===d)})).filter(g=>g.l.length);
+  body=`<div class="pad"><div class="row sp"><h2>Minha carteira</h2></div>
+   <div class="mut small" style="margin-top:18px;letter-spacing:1px;font-weight:700">SALDO DISPONÍVEL</div>
+   <div class="bal"><small>R$</small>${BRUNA.saldo.toFixed(2).replace('.',',')}</div>
+   <button class="btn block" style="margin-top:18px" data-act="depositar">${ic('plus',18)} Depositar</button>
+   <div class="card" style="margin-top:18px"><div class="row sp"><b>Transações</b><span class="mut small">${ex.length} registros</span></div>
+   <div class="seg" style="margin:12px 0 4px">${['Hoje','Este mês','Mês passado','Personalizado'].map(f=>`<button class="${S.filtro===f?'on':''}" data-act="filtro" data-arg="${f}">${f}</button>`).join('')}</div>
+   ${grupos.length?grupos.map(g=>`<div class="mut small" style="margin:14px 0 2px;font-weight:700;letter-spacing:.6px">${g.d.toUpperCase()} · ${g.l.length} transação(ões)</div>${g.l.map(e=>`<div class="tx row sp"><div><b>${e.desc}</b><div class="mut small">${e.hora} · ${e.tipo==='deposito'?'Pix':e.tipo==='estorno'?'Estorno':'Entrega'}</div></div><b class="${e.valor>0?'pos':'neg'}">${e.valor>0?'+':'-'} ${brl(Math.abs(e.valor))}</b></div>`).join('')}`).join(''):'<div class="mut" style="padding:20px 0;text-align:center">Nada neste período.</div>'}
+   </div></div>`;
+ }
+ if(t==='resultados'){
+  const n=21+concl().length-2;
+  body=`<div class="pad"><h2>Resultados</h2><div class="sub">Análise do seu estabelecimento</div>
+   <div class="seg" style="margin:14px 0">${['Hoje','Este mês','Mês passado','Personalizado'].map(f=>`<button class="${f==='Este mês'?'on':''}">${f}</button>`).join('')}</div>
+   <div class="card"><div class="row sp"><b>Métricas das entregas</b><span class="pill" style="background:rgba(251,146,60,.18);color:#fb923c">${n} entregas</span></div>
+   ${[['#0a84d6','Tempo de aceite','criação → aceite','2:18'],['#3b82f6','Indo coletar','aceite → chegada na loja','4:22'],['#f59e0b','Aguardando coleta','espera na loja','0:05'],['#8b5cf6','Em rota de entrega','coleta → cliente','7:23'],['#ef4444','Retornando','cliente → loja · 47% das entregas','3:59']].map(m=>`<div class="metric"><div><span class="dot" style="background:${m[0]}"></span>${m[1]}<div class="mut small" style="margin-left:17px">${m[2]}</div></div><b style="font-size:18px">${m[3]}</b></div>`).join('')}
+   <div class="metric"><div><span class="dot" style="background:#22c55e"></span><b>Tempo total (sem retorno)</b></div><b style="font-size:18px">14:08</b></div>
+   <div class="metric"><div>Distância média</div><b style="font-size:18px">2,1 km</b></div></div>
+   <div class="card" style="margin-top:12px;border-color:#14532d"><div class="mut small" style="color:#4ade80;font-weight:700;letter-spacing:.6px">TOTAL GASTO COM ENTREGAS</div><div class="bal" style="font-size:34px">${brl(706.65+(n-21)*6)}</div></div>
+   <button class="btn sec block" style="margin-top:12px">Sugestões</button></div>`;
+ }
+ let sheet='';
+ if(st.sheet)sheet=lojistaSheet(st.sheet);
+ return phone(body,'lojista',[['entrega','send','Entrega'],['resultados','bars','Resultados']],sheet,true,'BS');
+}
+function ordRow(o,act){
+ const [l,c]=ST[o.status];
+ return `<button class="ord" data-act="${act}" data-arg="${o.id}"><div class="ic">${ic('box',20)}</div><div style="flex:1;min-width:0"><div class="row sp"><b>#${o.id}</b><span class="pill" style="background:${c}22;color:${c}">${l}</span></div><div class="mut small" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${o.end}</div>${o.motoboy?`<div class="small" style="margin-top:2px">${o.motoboy}</div>`:''}</div></button>`;
+}
+function lojistaSheet(sh){
+ if(sh.k==='nova'){
+  return `<div class="sheet"><div class="in"><div class="grab"></div><div class="row sp"><h2 style="font-size:19px">Nova entrega</h2><button data-act="fechar" class="mut">${ic('x',20)}</button></div>
+  <label>Endereço de entrega</label><input type="text" id="f-end" list="dl" placeholder="Digite rua, número e bairro"><datalist id="dl">${DESTS.map(d=>`<option value="${d.a}">`).join('')}</datalist>
+  <div class="mut small" style="margin-top:5px">Na versão final: busca de endereço no mapa, com pino ajustável.</div>
+  <label>Nome do cliente</label><input type="text" id="f-cli" placeholder="Ex.: Maria Souza">
+  <label>Telefone do cliente</label><input type="tel" id="f-tel" placeholder="(34) 9 0000-0000">
+  <label>Observação</label><input type="text" id="f-obs" placeholder="Ex.: portão azul, tocar a campainha">
+  <label class="row" style="gap:10px;margin-top:14px;color:var(--txt);font-size:14px"><input type="checkbox" id="f-ret" style="width:18px;height:18px"> O motoboy deve retornar à loja (ex.: maquininha)</label>
+  <div class="card" style="margin-top:16px"><div class="row sp"><span class="mut">Valor da entrega</span><b>${brl(S.cfg.preco)}</b></div><div class="row sp" style="margin-top:6px"><span class="mut">Seu saldo depois</span><b class="${BRUNA.saldo-S.cfg.preco<0?'neg':''}">${brl(BRUNA.saldo-S.cfg.preco)}</b></div></div>
+  <button class="btn block" style="margin-top:14px" data-act="pedir">Pedir motoboy</button></div></div>`;
+ }
+ if(sh.k==='dep'){
+  return `<div class="sheet"><div class="in"><div class="grab"></div><div class="row sp"><h2 style="font-size:19px">Depositar via Pix</h2><button data-act="fechar" class="mut">${ic('x',20)}</button></div>
+  ${sh.qr?`<div style="text-align:center;margin-top:16px">${qrSVG(sh.valor+'x'+BRUNA.nome)}<div style="font-size:26px;font-weight:800;margin-top:10px">${brl(sh.valor)}</div>
+   <div class="mut small" style="margin:4px 0 12px">QR exclusivo da sua loja. Sem taxa para você.</div>
+   <button class="btn sec block" data-act="copiar">Copiar código Pix</button>
+   <button class="btn green block" style="margin-top:10px" data-act="simpix">Simular pagamento (só no protótipo)</button></div>`
+  :`<label>Quanto quer depositar? (mínimo ${brl(S.cfg.minimo)})</label><input type="number" id="f-val" value="50" min="1">
+   <div class="seg" style="margin-top:10px">${[20,50,100,200].map(v=>`<button data-act="valor" data-arg="${v}">${brl(v)}</button>`).join('')}</div>
+   <div class="card mut small" style="margin-top:14px;line-height:1.5">O pagamento cai na conta da empresa e o saldo aparece aqui automaticamente, em poucos segundos.</div>
+   <button class="btn block" style="margin-top:14px" data-act="gerarqr">Gerar QR Code</button>`}
+  </div></div>`;
+ }
+ const o=S.orders.find(x=>x.id==sh.id);const [l,c]=ST[o.status];
+ return `<div class="sheet"><div class="in"><div class="grab"></div><div class="row sp"><h2 style="font-size:19px">Entrega #${o.id}</h2><div class="row"><span class="pill" style="background:${c}22;color:${c}">${l}</span><button data-act="fechar" class="mut" aria-label="Fechar">${ic('x',20)}</button></div></div>
+ <div class="card" style="margin-top:14px"><div class="mut small">Destino</div><b>${o.end}</b><div class="mut small" style="margin-top:8px">Cliente</div><b>${o.cliente}</b> <span class="mut">${o.tel}</span>${o.retorno?'<div class="small" style="margin-top:8px;color:var(--amber)">Com retorno à loja</div>':''}</div>
+ ${o.motoboy?`<div class="card row sp" style="margin-top:10px"><div class="row"><div class="av" style="border-color:var(--blue)">${ini(o.motoboy)}</div><div><b>${o.motoboy}</b><div class="mut small">Moto Honda CG 160 · ABC-1D23</div></div></div><button class="btn sm">${ic('phone',16)} Ligar</button></div>`:'<div class="card mut" style="margin-top:10px">Procurando o motoboy mais próximo...</div>'}
+ ${o.status==='buscando'?`<button class="btn red block" style="margin-top:12px" data-act="cancelarLoj" data-arg="${o.id}">Cancelar e receber o valor de volta</button>`:'<div class="mut small" style="margin-top:12px;text-align:center">Depois que o motoboy aceita, só o dono pode cancelar.</div>'}
+ <button class="btn sec block" style="margin-top:10px" data-act="fechar">Voltar</button>
+ </div></div>`;
+}
+
+/* ---------- telas: motoboy / chefe ---------- */
+function motoboyView(r){
+ const st=R[r],me=st.me,m=S.motoboys.find(x=>x.nome===me),t=st.tab;
+ const mine=S.orders.find(o=>o.motoboy===me&&ATIVOS.includes(o.status));
+ let body='';
+ if(t==='inicio'){
+  if(mine){
+   const [l,c]=ST[mine.status];
+   const lbl={aceito:'Cheguei na loja',aguardando:'Coletei o pedido',em_rota:'Entreguei (foto opcional)',retornando:'Retornei à loja'}[mine.status];
+   body=`<div class="mapwrap">${mapSVG([mine])}<div class="chips"><div class="chip" style="flex:1;text-align:left;padding:10px 12px"><div class="row sp"><b style="font-size:15px">Corrida #${mine.id}</b><span class="pill" style="background:${c}22;color:${c}">${l}</span></div></div></div></div>
+   <div class="pad"><div class="card"><div class="mut small">${mine.status==='aceito'||mine.status==='aguardando'?'Coletar em':'Entregar em'}</div><b>${mine.status==='aceito'||mine.status==='aguardando'?'Bruna Sousa Doces - Rua Central, 100':mine.end}</b>
+   <div class="mut small" style="margin-top:8px">Cliente</div><b>${mine.cliente}</b>${mine.obs?`<div class="mut small" style="margin-top:6px">Obs.: ${mine.obs}</div>`:''}${mine.retorno?'<div class="small" style="margin-top:6px;color:var(--amber)">Retornar à loja depois de entregar</div>':''}
+   <div class="row sp" style="margin-top:10px"><span class="mut">Você recebe</span><b class="pos">${brl(mine.vMb)}</b></div></div>
+   <button class="btn block" style="margin-top:12px" data-act="etapa" data-arg="${mine.id}">${lbl}</button>
+   <div class="row" style="margin-top:8px;gap:8px"><button class="btn sec" style="flex:1">Abrir no Maps</button><button class="btn sec" style="flex:1">${ic('phone',16)} Ligar</button></div>
+   ${mine.status==='aceito'?`<button class="btn red block sm" style="margin-top:8px" data-act="desistir" data-arg="${mine.id}">Desistir da corrida</button>`:''}</div>`;
+  }else{
+   const disp=S.orders.filter(o=>o.status==='buscando');
+   body=`<div class="pad"><div class="card row sp"><div><b>${m.online?'Você está online':'Você está offline'}</b><div class="mut small">${m.online?'Recebendo pedidos próximos':'Ligue para receber pedidos'}</div></div><button class="btn sm ${m.online?'green':''}" data-act="online">${m.online?'Online':'Ficar online'}</button></div></div>
+   <div class="mapwrap" style="margin-top:-6px">${mapSVG([],{idle:true})}</div>
+   <div class="pad"><div class="row sp"><b>Pedidos disponíveis</b><span class="mut small">${m.online?disp.length:0}</span></div>
+   ${m.online&&disp.length?disp.map(o=>`<div class="card" style="margin-top:8px"><div class="row sp"><b>#${o.id}</b><b class="pos">${brl(o.vMb)}</b></div><div class="mut small" style="margin-top:4px">Coleta: Bruna Sousa Doces · 0,${(o.id%7)+3} km de você</div><div class="mut small">Entrega: ${o.end}</div>${o.retorno?'<div class="small" style="color:var(--amber)">Com retorno</div>':''}<button class="btn block" style="margin-top:10px" data-act="aceitar" data-arg="${o.id}">Aceitar corrida</button></div>`).join(''):`<div class="card mut" style="margin-top:8px;text-align:center">${m.online?'Nenhum pedido no momento. Peça uma entrega na aba Lojista.':'Fique online para ver os pedidos.'}</div>`}</div>`;
+  }
+ }
+ if(t==='ganhos'){
+  const fin=S.orders.filter(o=>o.motoboy===me&&o.status==='concluido');
+  body=`<div class="pad"><h2>Meus ganhos</h2><div class="grid g2" style="margin-top:14px"><div class="card"><div class="mut small">A receber</div><div class="bal" style="font-size:28px">${brl(S.repasse[me]||0)}</div></div><div class="card"><div class="mut small">Já pago (mês)</div><div class="bal" style="font-size:28px">${brl(me==='Carlos Lima'?120:80)}</div></div></div>
+  <div class="card" style="margin-top:12px"><b>Corridas de hoje</b>${fin.length?fin.map(o=>`<div class="tx row sp"><div><b>#${o.id}</b><div class="mut small">${o.hora} · ${o.end}</div></div><b class="pos">+ ${brl(o.vMb)}</b></div>`).join(''):'<div class="mut" style="padding:14px 0">Nenhuma corrida concluída ainda.</div>'}</div>
+  <div class="mut small" style="margin-top:10px;line-height:1.5">O pagamento é feito pelo dono por Pix, na sua chave cadastrada.</div></div>`;
+ }
+ if(t==='perfil'){
+  body=`<div class="pad"><div class="row" style="gap:14px"><div class="av" style="width:60px;height:60px;font-size:20px;border-color:var(--blue)">${ini(me)}</div><div><h2 style="font-size:20px">${me}</h2><div class="mut">${r==='chefe'?'Motoboy-chefe':'Motoboy'}</div></div></div>
+  <div class="card" style="margin-top:16px">${[['Moto','Honda CG 160 · ABC-1D23'],['CNH','Categoria A · válida'],['Chave Pix','***.***.***-12 (CPF)'],['Status','Aprovado pelo dono']].map(x=>`<div class="metric"><span class="mut">${x[0]}</span><b>${x[1]}</b></div>`).join('')}</div>
+  <div class="card mut small" style="margin-top:12px;line-height:1.5">Dica do app: para o rastreio funcionar com a tela apagada, marque "Permitir o tempo todo" na localização e tire o app da economia de bateria.</div></div>`;
+ }
+ if(t==='gestao'){
+  const fila=S.orders.filter(o=>o.status==='buscando');
+  const livres=S.motoboys.filter(x=>x.online);
+  body=`<div class="pad"><h2>Gestão do dia</h2><div class="sub">Sem valores financeiros</div>
+  <div class="card" style="margin-top:14px"><b>Fila sem motoboy (${fila.length})</b>${fila.length?fila.map(o=>`<div class="tx"><div class="row sp"><b>#${o.id}</b><span class="mut small">${o.end}</span></div><div class="inl" style="margin-top:8px"><select id="atr-${o.id}" style="flex:1">${livres.map(x=>`<option>${x.nome}</option>`).join('')}</select><button class="btn sm" data-act="atribuir" data-arg="${o.id}">Atribuir</button></div></div>`).join(''):'<div class="mut" style="padding:12px 0">Nenhum pedido aguardando motoboy.</div>'}</div>
+  <div class="card" style="margin-top:12px"><b>Motoboys</b>${S.motoboys.map(x=>{const a=S.orders.find(o=>o.motoboy===x.nome&&ATIVOS.includes(o.status));const [l,c]=a?ST[a.status]:[x.online?'Livre':'Offline',x.online?'#22c55e':'#6b7280'];return `<div class="tx row sp"><div class="row"><div class="av" style="width:30px;height:30px;font-size:11px;border-color:${c}">${ini(x.nome)}</div><div><b>${x.nome}</b>${x.chefe?' <span class="pill" style="background:#8b5cf622;color:#a78bfa">chefe</span>':''}<div class="mut small">${a?'#'+a.id+' · '+a.end:'sem corrida'}</div></div></div><span class="pill" style="background:${c}22;color:${c}">${l}</span></div>`}).join('')}</div>
+  <div class="mapwrap card" style="padding:0;overflow:hidden;margin-top:12px">${mapSVG(S.orders,{idle:true})}</div></div>`;
+ }
+ const items=[['inicio','home','Início'],['ganhos','wallet','Ganhos'],['perfil','user','Perfil']];
+ if(r==='chefe')items.splice(1,0,['gestao','users','Gestão']);
+ return phone(body,r,items,'',false,ini(me));
+}
+
+/* ---------- moldura do celular ---------- */
+function phone(body,r,items,sheet,wallet,avatar){
+ const st=R[r];
+ const nav=items.map(i=>`<button class="${st.tab===i[0]?'on':''}" data-act="tab" data-arg="${i[0]}">${ic(i[1],22)}${i[2]}</button>`).join('')+(wallet?`<button class="wal ${st.tab==='carteira'?'on':''}" data-act="tab" data-arg="carteira">${ic('wallet',18)} ${brl(BRUNA.saldo)}</button>`:'');
+ return `<div class="split"><div class="center">${addr(false,r!=='lojista')}<div class="phone"><div class="hd"><div class="logo"><i>E</i><span>ENTREGA <b>LOCAL</b></span></div><div class="av">${avatar}</div></div>
+ <div class="scroll" id="sc">${st.blocked?bloqueio():body}</div>${st.blocked?'':sheet}<div class="nav">${nav}</div></div>
+ <div class="cap">${r==='lojista'?'Site instalável no celular (PWA).':r==='chefe'?'App Android do motoboy, com o menu extra "Gestão".':'App Android do motoboy.'} Troque o endereço acima para testar o bloqueio.</div></div><aside class="explain">${explain(r)}</aside></div>`;
+}
+const EX={
+ lojista:{
+  entrega:['Tela inicial do lojista','Mostra a situação das entregas da loja em tempo real.',['No mapa aparecem a loja (L) e os motoboys que estão em corrida, andando conforme o GPS deles.','Os cinco contadores no topo mostram quantas entregas estão: buscando motoboy, aguardando coleta, em rota, retornando e concluídas.','"Entregas ativas" lista cada pedido. Tocar em um abre os detalhes.','"Nova entrega" abre o formulário de pedido.'],'O lojista só vê as entregas da própria loja.'],
+  carteira:['Carteira','Controle do saldo pré-pago usado para pagar as entregas.',['O saldo diminui no momento em que o pedido é feito. Se o pedido for cancelado antes de um motoboy aceitar, o valor volta.','"Depositar" gera um QR Code Pix com o valor que o lojista escolher. O saldo entra sozinho assim que o banco avisa que o Pix caiu.','O extrato mostra depósitos, entregas e estornos, com filtros por período.','Nesta versão não há saque nem pagamento de boleto.'],'Cada lojista vê apenas o próprio saldo e extrato.'],
+  resultados:['Resultados','Análise do desempenho das entregas da loja.',['Tempo médio de cada etapa: aceite, ida até a loja, espera pela coleta, rota até o cliente e retorno.','Distância média das entregas e total gasto no período.','Ajuda o lojista a ver onde o tempo está sendo perdido, por exemplo pedido demorando para ficar pronto.'],'Dados só da própria loja.'],
+  nova:['Nova entrega','Formulário para pedir um motoboy.',['Endereço e dados do cliente final. Na versão real, o endereço é buscado no mapa e o pino pode ser ajustado.','"Retornar à loja" serve para casos como levar a maquininha. O motoboy passa pela etapa extra "Retornando".','O resumo mostra o valor e o saldo que sobra. Sem saldo suficiente, o pedido não é enviado e o sistema pede um depósito.','Ao confirmar, o pedido vira "Buscando" e aparece para os motoboys online.'],'O valor da entrega fica registrado no pedido e não muda se o preço for alterado depois.'],
+  dep:['Depositar via Pix','Como o lojista coloca saldo na carteira.',['O lojista escolhe o valor (acima do mínimo) e o sistema gera o QR Code Pix da loja.','O Pix cai direto na conta da empresa. O sistema é avisado pelo banco e libera o saldo sem ninguém precisar conferir.','O botão verde "Simular pagamento" existe só neste protótipo.'],'Sem taxa de depósito para o lojista.'],
+  ver:['Detalhes da entrega','Acompanhamento de uma entrega.',['Mostra destino, cliente e, depois que alguém aceita, o motoboy com nome, moto e placa, com botão de ligar.','Enquanto ninguém aceitou, o lojista pode cancelar e o valor volta ao saldo.','Depois do aceite, só o dono pode cancelar. Isso evita cancelamento com o motoboy já a caminho.'],'Visível só para o lojista que fez o pedido.']
+ },
+ motoboy:{
+  livre:['Início do motoboy','Onde o motoboy escolhe quando trabalhar e pega corridas.',['O botão online/offline liga e desliga o recebimento de pedidos. Offline, o GPS não é enviado.','A lista mostra os pedidos disponíveis com valor que ele recebe e distância da loja.','O primeiro que tocar em "Aceitar" fica com a corrida. Se outro aceitou antes, o app avisa.','No app real, um aviso toca no celular quando entra pedido novo.'],'Mostra apenas o valor do motoboy. Ele não vê saldo nem dados financeiros do lojista.'],
+  corrida:['Corrida em andamento','Passo a passo da entrega.',['Um botão por etapa: "Cheguei na loja", "Coletei o pedido", "Entreguei" (com foto opcional) e, se pedido, "Retornei à loja".','Cada toque registra o horário, e é daí que saem os tempos da tela "Resultados" do lojista.','O GPS é enviado a cada poucos segundos, mesmo com a tela apagada. É isso que move o ponto no mapa do lojista.','"Abrir no Maps" chama o navegador do celular. "Desistir" só vale antes da coleta e devolve o pedido à fila.'],'Uma corrida por vez.'],
+  ganhos:['Ganhos','Quanto o motoboy tem a receber.',['"A receber" é o total das corridas concluídas que ainda não foram pagas pelo dono.','"Já pago" mostra o que foi repassado no mês.','O dono paga por Pix na chave cadastrada e marca como pago no sistema.'],'Cada motoboy vê só os próprios ganhos.'],
+  perfil:['Perfil','Dados cadastrais do motoboy.',['Moto, CNH e chave Pix. O cadastro só vale depois que o dono aprova os documentos.','Mostra a dica de ajustar o celular para o GPS não parar com a tela apagada.'],'Dados pessoais só do próprio motoboy.']
+ },
+ chefe:{
+  gestao:['Gestão do dia (só o chefe)','Menu extra do motoboy-chefe.',['A "Fila sem motoboy" lista pedidos que ninguém aceitou. O chefe escolhe um motoboy livre e toca em "Atribuir".','A lista de motoboys mostra quem está livre, em corrida ou offline, e onde cada um está.','O mapa mostra todos os motoboys online.','Não há valores em reais nesta tela. Aprovar cadastro, alterar preço e ajustar saldo continuam só com o dono.'],'Um motoboy comum não consegue abrir esta tela, nem digitando o endereço.']
+ }
+};
+function explain(r){
+ const st=R[r];
+ if(st.blocked)return `<h3>Bloqueio de acesso</h3><p>${NOME[r]} tentou abrir um endereço de outro perfil.</p><ul><li>O menu nunca mostra botões de áreas que o perfil não pode usar.</li><li>Se alguém digitar o endereço mesmo assim, a tela leva ao aviso de acesso negado.</li><li>Principalmente: o servidor também recusa o pedido, então nenhum dado é enviado.</li><li>A tentativa fica registrada.</li></ul><div class="who">Quem pode: apenas o perfil dono daquela área.</div>`;
+ let e;
+ if(r==='lojista'){const sh=st.sheet;e=EX.lojista[sh?sh.k:st.tab]}
+ else{
+  const mine=S.orders.find(o=>o.motoboy===st.me&&ATIVOS.includes(o.status));
+  e=(r==='chefe'&&st.tab==='gestao')?EX.chefe.gestao:EX.motoboy[st.tab==='inicio'?(mine?'corrida':'livre'):st.tab];
+  if(r==='chefe'&&st.tab!=='gestao')e=[e[0]+' (igual ao motoboy)',...e.slice(1)];
+ }
+ return `<div class="tag">${r==='lojista'?'Lojista':r==='chefe'?'Motoboy-chefe':'Motoboy'}</div><h3>${e[0]}</h3><p>${e[1]}</p><ul>${e[2].map(x=>`<li>${x}</li>`).join('')}</ul><div class="who">${e[3]}</div>`;
+}
+
+/* ---------- desktop ---------- */
+function desk(r,menu,body,usuario){
+ const st=R[r];
+ return `${addr(true)}<div class="desk"><div class="side"><div class="logo"><i>E</i><span>ENTREGA <b>LOCAL</b></span></div>${menu.map(m=>`<button class="${st.tab===m[0]?'on':''}" data-act="tab" data-arg="${m[0]}">${ic(m[1],18)}${m[2]}${m[3]?`<span class="badge">${m[3]}</span>`:''}</button>`).join('')}<div class="mut small" style="padding:16px 12px 0">${usuario}</div></div>
+ <div class="main">${st.blocked?bloqueio():body}</div></div>`;
+}
+function donoView(){
+ const t=R.dono.tab,os=S.orders;
+ const saldoTot=S.lojistas.reduce((a,l)=>a+l.saldo,0);
+ const pend=S.pendLojistas.length+S.pendMotoboys.length;
+ const menu=[['painel','home','Painel do dia'],['pedidos','list','Pedidos'],['lojistas','users','Lojistas',S.pendLojistas.length||''],['motoboys','user','Motoboys',S.pendMotoboys.length||''],['depositos','pix','Depósitos',S.pix.length||''],['repasses','pay','Repasses'],['config','gear','Configurações'],['relatorios','file','Relatórios']];
+ let b='';
+ if(t==='painel'){
+  b=`<h2>Painel do dia</h2><div class="sub">${pend?`${pend} cadastro(s) esperando aprovação · `:''}${S.pix.length} Pix sem identificação</div>
+  <div class="grid g4" style="margin:14px 0">${[['Corridas hoje',S.base.hoje+os.length],['Em andamento',ativas().length],['Motoboys online',S.motoboys.filter(m=>m.online).length],['Saldo dos lojistas',brl(saldoTot)]].map(k=>`<div class="card kpi"><div class="mut small">${k[0]}</div><div class="v">${k[1]}</div></div>`).join('')}</div>
+  <div class="grid g2"><div class="card" style="padding:0;overflow:hidden">${mapSVG(os,{idle:true})}</div><div class="card"><b>Últimos pedidos</b>${os.slice(0,6).map(o=>{const [l,c]=ST[o.status];return `<div class="tx row sp"><div><b>#${o.id}</b> <span class="mut small">${o.motoboy||'sem motoboy'}</span></div><span class="pill" style="background:${c}22;color:${c}">${l}</span></div>`}).join('')}</div></div>`;
+ }
+ if(t==='pedidos'){
+  b=`<h2>Pedidos</h2><div class="card" style="margin-top:14px;overflow:auto"><table><tr><th>Pedido</th><th>Hora</th><th>Cliente</th><th>Motoboy</th><th>Valor</th><th>Status</th><th></th></tr>
+  ${os.map(o=>{const [l,c]=ST[o.status];return `<tr><td><b>#${o.id}</b></td><td>${o.hora}</td><td>${o.cliente}</td><td>${o.motoboy||'-'}</td><td>${brl(o.valor)}</td><td><span class="pill" style="background:${c}22;color:${c}">${l}</span></td><td>${ATIVOS.includes(o.status)?`<div class="inl"><button class="btn sm red" data-act="cancelDono" data-arg="${o.id}|1">Cancelar e estornar</button><button class="btn sm sec" data-act="cancelDono" data-arg="${o.id}|0">Sem estorno</button></div>`:''}</td></tr>`}).join('')}</table></div>`;
+ }
+ if(t==='lojistas'){
+  b=`<h2>Lojistas</h2>${S.pendLojistas.length?`<div class="card" style="margin:14px 0"><b>Aguardando aprovação</b>${S.pendLojistas.map((n,i)=>`<div class="tx row sp"><span>${n}</span><div class="inl"><button class="btn sm green" data-act="aprovLoj" data-arg="${i}">Aprovar</button></div></div>`).join('')}</div>`:''}
+  <div class="card" style="margin-top:14px;overflow:auto"><table><tr><th>Lojista</th><th>Saldo</th><th>Ajustar saldo (motivo obrigatório)</th></tr>${S.lojistas.map((l,i)=>`<tr><td><b>${l.nome}</b></td><td>${brl(l.saldo)}</td><td><div class="inl"><input type="number" id="aj-v-${i}" placeholder="+/- R$"><input type="text" class="w" id="aj-m-${i}" placeholder="Motivo"><button class="btn sm sec" data-act="ajustar" data-arg="${i}">Aplicar</button></div></td></tr>`).join('')}</table></div>`;
+ }
+ if(t==='motoboys'){
+  b=`<h2>Motoboys</h2>${S.pendMotoboys.length?`<div class="card" style="margin:14px 0"><b>Aguardando aprovação (documentos anexados)</b>${S.pendMotoboys.map((n,i)=>`<div class="tx row sp"><span>${n} <span class="mut small">CNH · CRLV · selfie</span></span><button class="btn sm green" data-act="aprovMb" data-arg="${i}">Aprovar</button></div>`).join('')}</div>`:''}
+  <div class="card" style="margin-top:14px"><table><tr><th>Motoboy</th><th>Status</th><th>Função</th><th></th></tr>${S.motoboys.map(m=>`<tr><td><b>${m.nome}</b></td><td>${m.online?'<span class="pill" style="background:#22c55e22;color:#22c55e">Online</span>':'<span class="pill" style="background:#6b728022;color:#9ca3af">Offline</span>'}</td><td>${m.chefe?'Chefe':'Motoboy'}</td><td>${m.chefe?'':`<button class="btn sm sec" data-act="chefe" data-arg="${m.nome}">Nomear chefe</button>`}</td></tr>`).join('')}</table></div>`;
+ }
+ if(t==='depositos'){
+  b=`<h2>Depósitos</h2><div class="sub">Pix recebidos na conta da empresa</div><div class="card" style="margin-top:14px"><b>Pix não identificados (${S.pix.length})</b><div class="mut small" style="margin:4px 0 6px">Quem pagou sem usar o QR da loja. Associe ao lojista certo e o saldo é creditado.</div>
+  ${S.pix.length?`<table><tr><th>Hora</th><th>Pagador</th><th>Valor</th><th>Associar a</th></tr>${S.pix.map((p,i)=>`<tr><td>${p.hora}</td><td>${p.nome}<div class="mut small">${p.doc}</div></td><td><b>${brl(p.valor)}</b></td><td><div class="inl"><select id="px-${i}">${S.lojistas.map((l,j)=>`<option value="${j}">${l.nome}</option>`).join('')}</select><button class="btn sm" data-act="assocPix" data-arg="${i}">Associar</button></div></td></tr>`).join('')}</table>`:'<div class="mut" style="padding:16px 0">Nenhum Pix pendente.</div>'}</div>`;
+ }
+ if(t==='repasses'){
+  b=`<h2>Repasses aos motoboys</h2><div class="sub">O valor é do motoboy. A empresa recebe em nome dele e repassa por Pix, com comprovante.</div><div class="card" style="margin-top:14px"><table><tr><th>Motoboy</th><th>A pagar</th><th></th></tr>${S.motoboys.map(m=>`<tr><td><b>${m.nome}</b></td><td>${brl(S.repasse[m.nome]||0)}</td><td>${(S.repasse[m.nome]||0)>0?`<button class="btn sm green" data-act="pagar" data-arg="${m.nome}">Anexar comprovante e marcar pago</button>`:'<span class="mut small">em dia</span>'}</td></tr>`).join('')}</table></div>
+  ${S.pagos.length?`<div class="card" style="margin-top:12px"><b>Pagos agora</b>${S.pagos.map(p=>`<div class="tx row sp"><span>${p.nome} · ${p.hora}</span><b>${brl(p.v)}</b></div>`).join('')}</div>`:''}`;
+ }
+ if(t==='config'){
+  b=`<h2>Configurações</h2><div class="card" style="margin-top:14px;max-width:520px">
+  <label>Preço da entrega para o lojista (R$)</label><input type="number" id="c-preco" value="${S.cfg.preco}" step="0.5">
+  <label>Valor que fica com o motoboy (R$)</label><input type="number" id="c-mb" value="${S.cfg.motoboy}" step="0.5">
+  <div class="row sp card" style="margin-top:14px;background:var(--card2)"><span class="mut">Taxa da plataforma (receita da empresa)</span><b class="pos">${brl(taxa())}</b></div>
+  <label>Depósito mínimo (R$)</label><input type="number" id="c-min" value="${S.cfg.minimo}">
+  <button class="btn" style="margin-top:16px" data-act="salvarCfg">Salvar</button><div class="mut small" style="margin-top:10px">Pedidos já feitos mantêm o valor da época em que foram criados.</div></div>`;
+ }
+ if(t==='relatorios'){
+  const n=S.base.concl+concl().length;
+  b=`<h2>Relatório para o contador</h2><div class="sub">Novembro, até hoje</div><div class="grid g3" style="margin:14px 0">
+  <div class="card kpi"><div class="mut small">Receita da plataforma (taxas)</div><div class="v pos">${brl(n*taxa())}</div><div class="mut small">${n} entregas × ${brl(taxa())}</div></div>
+  <div class="card kpi"><div class="mut small">Valores de terceiros (repasse motoboys)</div><div class="v">${brl(n*S.cfg.motoboy)}</div><div class="mut small">não é receita da empresa</div></div>
+  <div class="card kpi"><div class="mut small">Saldos em aberto (adiantamentos)</div><div class="v">${brl(saldoTot+ativas().reduce((a,o)=>a+o.valor,0))}</div><div class="mut small">depositado e ainda não usado</div></div></div>
+  <button class="btn" data-act="csv">Exportar CSV</button>`;
+ }
+ return desk('dono',menu,b,'Logado como Dono');
+}
+
+/* ---------- render ---------- */
+function render(){
+ const sc=$('#sc');const keep=sc?sc.scrollTop:0;
+ document.getElementById('roles').innerHTML=Object.keys(NOME).map(k=>`<button class="role ${k===role?'on':''}" data-act="role" data-arg="${k}">${NOME[k]}</button>`).join('');
+ $('#stage').innerHTML={lojista:lojistaView,motoboy:()=>motoboyView('motoboy'),chefe:()=>motoboyView('chefe'),dono:donoView}[role]();
+ const n=$('#sc');if(n)n.scrollTop=keep;
+ const a=$('#addr');if(a)a.addEventListener('keydown',e=>{if(e.key==='Enter'){irPara(a.value);render()}});
+}
+const A={
+ role:a=>{role=a;render()},
+ tab:a=>{R[role].tab=a;R[role].blocked=null;if(role==='lojista')R.lojista.sheet=null;render()},
+ voltar:()=>{R[role].blocked=null;render()},
+ nova:()=>{R.lojista.sheet={k:'nova'};render()},
+ fechar:()=>{R.lojista.sheet=null;render()},
+ verPedido:a=>{R.lojista.sheet={k:'ver',id:a};render()},
+ pedir:()=>{
+  const end=$('#f-end').value.trim(),cli=$('#f-cli').value.trim();
+  if(!end||!cli){toast('Preencha o endereço e o nome do cliente.',1);return}
+  if(!criarPedido({end,cliente:cli,tel:$('#f-tel').value||'(34) 9 0000-0000',obs:$('#f-obs').value,retorno:$('#f-ret').checked})){toast('Saldo insuficiente. Faça um depósito primeiro.',1);return}
+  R.lojista.sheet=null;toast('Pedido enviado. Procurando motoboy...');render();
+ },
+ cancelarLoj:a=>{const o=S.orders.find(x=>x.id==a);if(o.status!=='buscando')return;cancelar(o,true,BRUNA.nome);R.lojista.sheet=null;toast('Pedido cancelado. Valor devolvido ao saldo.');render()},
+ depositar:()=>{R.lojista.sheet={k:'dep',qr:false};render()},
+ valor:a=>{$('#f-val').value=a},
+ gerarqr:()=>{const v=Number($('#f-val').value);if(!v||v<S.cfg.minimo){toast('O depósito mínimo é '+brl(S.cfg.minimo)+'.',1);return}R.lojista.sheet={k:'dep',qr:true,valor:v};render()},
+ copiar:()=>toast('Código Pix copiado.'),
+ simpix:()=>{const v=R.lojista.sheet.valor;BRUNA.saldo+=v;S.extrato.unshift({dia:'hoje',hora:hora(),tipo:'deposito',desc:'Depósito via Pix',valor:v});log('Sistema','Pix de '+brl(v)+' recebido e creditado em '+BRUNA.nome);R.lojista.sheet=null;toast('Pix recebido. Saldo atualizado.');render()},
+ filtro:a=>{S.filtro=a;render()},
+ online:()=>{const m=S.motoboys.find(x=>x.nome===R[role].me);m.online=!m.online;render()},
+ aceitar:a=>{const o=S.orders.find(x=>x.id==a);if(o.status!=='buscando'){toast('Outro motoboy já aceitou.',1);render();return}o.motoboy=R[role].me;setStatus(o,'aceito');log(o.motoboy,'Aceitou o pedido #'+o.id);toast('Corrida aceita.');render()},
+ etapa:a=>{const o=S.orders.find(x=>x.id==a);const prox=o.status==='em_rota'?(o.retorno?'retornando':'concluido'):PROX[o.status];setStatus(o,prox);if(prox==='concluido'){log(o.motoboy,'Concluiu o pedido #'+o.id);toast('Corrida concluída. '+brl(o.vMb)+' a receber.')}render()},
+ desistir:a=>{const o=S.orders.find(x=>x.id==a);log(o.motoboy,'Desistiu do pedido #'+o.id+' (voltou para a fila)');o.motoboy=null;setStatus(o,'buscando');toast('Pedido devolvido à fila.');render()},
+ atribuir:a=>{const o=S.orders.find(x=>x.id==a);const nome=$('#atr-'+a).value;o.motoboy=nome;setStatus(o,'aceito');log(R.chefe.me+' (chefe)','Atribuiu o pedido #'+o.id+' a '+nome);toast('Atribuído a '+nome+'.');render()},
+ cancelDono:a=>{const [id,e]=a.split('|');const o=S.orders.find(x=>x.id==id);cancelar(o,e==='1','Dono');toast('Pedido cancelado.');render()},
+ aprovLoj:a=>{const n=S.pendLojistas.splice(a,1)[0];S.lojistas.push({nome:n,saldo:0,ok:true});log('Dono','Aprovou o cadastro de '+n);render()},
+ aprovMb:a=>{const n=S.pendMotoboys.splice(a,1)[0];S.motoboys.push({nome:n,online:false});S.repasse[n]=0;MB_POS[n]={x:200,y:60};log('Dono','Aprovou o cadastro de '+n);render()},
+ chefe:a=>{S.motoboys.forEach(m=>m.chefe=m.nome===a);log('Dono','Nomeou '+a+' como chefe');toast(a+' agora é motoboy-chefe.');render()},
+ ajustar:a=>{const v=Number($('#aj-v-'+a).value),m=$('#aj-m-'+a).value.trim();if(!v||!m){toast('Informe o valor e o motivo.',1);return}S.lojistas[a].saldo+=v;if(a==0)S.extrato.unshift({dia:'hoje',hora:hora(),tipo:'ajuste',desc:'Ajuste: '+m,valor:v});log('Dono','Ajustou o saldo de '+S.lojistas[a].nome+' em '+brl(v)+' ('+m+')');toast('Saldo ajustado e registrado.');render()},
+ assocPix:a=>{const p=S.pix[a],j=Number($('#px-'+a).value);S.lojistas[j].saldo+=p.valor;if(j===0)S.extrato.unshift({dia:'hoje',hora:hora(),tipo:'deposito',desc:'Depósito via Pix',valor:p.valor});log('Dono','Associou o Pix de '+brl(p.valor)+' a '+S.lojistas[j].nome);S.pix.splice(a,1);toast('Pix associado. Saldo creditado.');render()},
+ pagar:a=>{const v=S.repasse[a];S.pagos.unshift({nome:a,v,hora:hora()});S.repasse[a]=0;log('Dono','Pagou '+brl(v)+' a '+a+' (comprovante anexado)');toast('Repasse registrado.');render()},
+ salvarCfg:()=>{const p=Number($('#c-preco').value),m=Number($('#c-mb').value);if(m>=p){toast('O valor do motoboy deve ser menor que o preço.',1);return}S.cfg={preco:p,motoboy:m,minimo:Number($('#c-min').value)||20};log('Dono','Alterou os valores (entrega '+brl(p)+', motoboy '+brl(m)+')');toast('Configurações salvas.');render()},
+ csv:()=>toast('CSV gerado (no sistema real, baixa o arquivo).')
+};
+document.addEventListener('click',e=>{if(e.target.classList.contains('sheet')){A.fechar();return}const el=e.target.closest('[data-act]');if(!el||el.disabled)return;const f=A[el.dataset.act];if(f)f(el.dataset.arg)});
+render();
+</script>
+</body>
+</html>
