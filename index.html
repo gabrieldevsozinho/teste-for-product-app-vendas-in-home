@@ -198,6 +198,7 @@ const S={
   {t:'09:12',quem:'Sistema',acao:'Pix de R$ 30,00 recebido sem identificação'}
  ],
  base:{concl:139,canc:3,hoje:41,dias:[38,45,41,52,47,43]},
+ gmaps:{chave:'',ativa:false},
  filtro:'Este mês',nextId:968475
 };
 const BRUNA=S.lojistas[0];
@@ -505,7 +506,12 @@ function donoView(){
   <label>Valor que fica com o motoboy (R$)</label><input type="number" id="c-mb" value="${S.cfg.motoboy}" step="0.5">
   <div class="row sp card" style="margin-top:14px;background:var(--card2)"><span class="mut">Taxa da plataforma (receita da empresa)</span><b class="pos">${brl(taxa())}</b></div>
   <label>Depósito mínimo (R$)</label><input type="number" id="c-min" value="${S.cfg.minimo}">
-  <button class="btn" style="margin-top:16px" data-act="salvarCfg">Salvar</button><div class="mut small" style="margin-top:10px">Pedidos já feitos mantêm o valor da época em que foram criados.</div></div>`;
+  <button class="btn" style="margin-top:16px" data-act="salvarCfg">Salvar</button><div class="mut small" style="margin-top:10px">Pedidos já feitos mantêm o valor da época em que foram criados.</div></div>
+  <div class="card" style="margin-top:14px;max-width:520px"><div class="row sp"><b>Google Maps da empresa</b><span class="pill" style="background:${S.gmaps.ativa?'#22c55e22':'#f59e0b22'};color:${S.gmaps.ativa?'#22c55e':'#f59e0b'}">${S.gmaps.ativa?'Chave ativa':'Chave não cadastrada'}</span></div>
+  <div class="mut small" style="margin-top:6px;line-height:1.5">O mapa do sistema usa a conta do Google da própria empresa (cota gratuita mensal; acima dela o Google cobra no cartão cadastrado). Cole aqui a chave criada no Google Cloud.</div>
+  <label>Chave de API do Google Maps</label><input type="text" id="c-gkey" value="${S.gmaps.chave}" placeholder="AIza..." autocomplete="off">
+  <div class="inl" style="margin-top:12px"><button class="btn sm" data-act="salvarMaps">Salvar chave</button><button class="btn sm sec" data-act="testarMaps">Testar chave</button></div>
+  <div class="mut small" style="margin-top:10px">Passo a passo para criar a chave, com imagens, fica nesta mesma aba.</div></div>`;
  }
  if(t==='relatorios'){
   const n=S.base.concl+concl().length;
@@ -559,6 +565,8 @@ const A={
  assocPix:a=>{const p=S.pix[a],j=Number($('#px-'+a).value);S.lojistas[j].saldo+=p.valor;if(j===0)S.extrato.unshift({dia:'hoje',hora:hora(),tipo:'deposito',desc:'Depósito via Pix',valor:p.valor});log('Dono','Associou o Pix de '+brl(p.valor)+' a '+S.lojistas[j].nome);S.pix.splice(a,1);toast('Pix associado. Saldo creditado.');render()},
  pagar:a=>{const v=S.repasse[a];S.pagos.unshift({nome:a,v,hora:hora()});S.repasse[a]=0;log('Dono','Pagou '+brl(v)+' a '+a+' (comprovante anexado)');toast('Repasse registrado.');render()},
  salvarCfg:()=>{const p=Number($('#c-preco').value),m=Number($('#c-mb').value);if(m>=p){toast('O valor do motoboy deve ser menor que o preço.',1);return}S.cfg={preco:p,motoboy:m,minimo:Number($('#c-min').value)||20};log('Dono','Alterou os valores (entrega '+brl(p)+', motoboy '+brl(m)+')');toast('Configurações salvas.');render()},
+ salvarMaps:()=>{const k=$('#c-gkey').value.trim();if(k.length<8){toast('Cole a chave de API do Google Maps.',1);return}S.gmaps={chave:k,ativa:true};log('Dono','Cadastrou a chave do Google Maps');toast('Chave salva e ativa.');render()},
+ testarMaps:()=>{const k=$('#c-gkey').value.trim();if(k.length<8){toast('Cole a chave antes de testar.',1);return}toast('Teste ok (no sistema real, consulta o Google de verdade).')},
  csv:()=>toast('CSV gerado (no sistema real, baixa o arquivo).')
 };
 document.addEventListener('click',e=>{if(e.target.classList.contains('sheet')){A.fechar();return}const el=e.target.closest('[data-act]');if(!el||el.disabled)return;const f=A[el.dataset.act];if(f)f(el.dataset.arg)});
