@@ -161,28 +161,28 @@ const I={
  check:'<path d="M5 12l5 5 9-10"/>',plus:'<path d="M12 5v14M5 12h14"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>'
 };
 const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
-const ini=n=>n.split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase();
+const ini=n=>{const p=n.split(' ');return p.length>1?p.slice(0,2).map(x=>x[0]).join('').toUpperCase():n[0].toUpperCase()+(n.match(/[0-9]+$/)||[''])[0]};
 function toast(m,err){const t=document.createElement('div');t.className='toast'+(err?' err':'');t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2600)}
 
 /* ---------- estado ---------- */
 const STORE={x:150,y:215};
-const MB_POS={'Wester Dario':{x:55,y:70},'Carlos Lima':{x:310,y:340},'Joana Reis':{x:70,y:340},'Pedro Alves':{x:320,y:60}};
+const MB_POS={'Entregador1':{x:55,y:70},'Entregador2':{x:310,y:340},'Entregador3':{x:70,y:340},'Entregador4':{x:320,y:60}};
 const DESTS=[
  {a:'Rua das Acácias, 245 - Santa Vitória',x:250,y:95},{a:'Av. Brasil, 1020 - Centro',x:290,y:200},
  {a:'Rua do Canal, 88 - Jardim Europa',x:90,y:110},{a:'Rua Goiás, 560 - Planalto',x:215,y:320},{a:'Rua Minas Gerais, 33 - Bela Vista',x:60,y:260}
 ];
 const S={
  cfg:{preco:6,motoboy:5,minimo:20},
- lojistas:[{nome:'Bruna Sousa Doces',saldo:96.08,ok:true},{nome:'Lanches do Zé',saldo:143,ok:true},{nome:'Mercado Bom Preço',saldo:12.5,ok:true}],
- pendLojistas:['Padaria Pão Quente','Farmácia Central'],
- motoboys:[{nome:'Wester Dario',online:true},{nome:'Carlos Lima',online:true},{nome:'Joana Reis',online:true,chefe:true},{nome:'Pedro Alves',online:false}],
- pendMotoboys:['Rafael Moura','Ana Beatriz'],
- repasse:{'Wester Dario':48,'Carlos Lima':35,'Joana Reis':60,'Pedro Alves':0},
+ lojistas:[{nome:'Lojista1',saldo:96.08,ok:true},{nome:'Lojista2',saldo:143,ok:true},{nome:'Lojista3',saldo:12.5,ok:true}],
+ pendLojistas:['Lojista4','Lojista5'],
+ motoboys:[{nome:'Entregador1',online:true},{nome:'Entregador2',online:true},{nome:'Entregador3',online:true,chefe:true},{nome:'Entregador4',online:false}],
+ pendMotoboys:['Entregador5','Entregador6'],
+ repasse:{'Entregador1':48,'Entregador2':35,'Entregador3':60,'Entregador4':0},
  pagos:[],
  orders:[
-  {id:968474,cliente:'Marcos Paulo',tel:'(34) 99111-0001',end:DESTS[1].a,retorno:false,status:'em_rota',motoboy:'Wester Dario',valor:6,vMb:5,taxa:1,dest:DESTS[1],p0:MB_POS['Wester Dario'],prog:.35,hora:'14:27'},
-  {id:968471,cliente:'Lúcia Ramos',tel:'(34) 99111-0002',end:DESTS[0].a,retorno:false,status:'concluido',motoboy:'Carlos Lima',valor:6,vMb:5,taxa:1,dest:DESTS[0],p0:MB_POS['Carlos Lima'],prog:1,hora:'13:50'},
-  {id:968470,cliente:'Paulo Dias',tel:'(34) 99111-0003',end:DESTS[2].a,retorno:true,status:'concluido',motoboy:'Wester Dario',valor:6,vMb:5,taxa:1,dest:DESTS[2],p0:MB_POS['Wester Dario'],prog:1,hora:'13:10'}
+  {id:968474,cliente:'Cliente1',tel:'(34) 99111-0001',end:DESTS[1].a,retorno:false,status:'em_rota',motoboy:'Entregador1',valor:6,vMb:5,taxa:1,dest:DESTS[1],p0:MB_POS['Entregador1'],prog:.35,hora:'14:27'},
+  {id:968471,cliente:'Cliente2',tel:'(34) 99111-0002',end:DESTS[0].a,retorno:false,status:'concluido',motoboy:'Entregador2',valor:6,vMb:5,taxa:1,dest:DESTS[0],p0:MB_POS['Entregador2'],prog:1,hora:'13:50'},
+  {id:968470,cliente:'Cliente3',tel:'(34) 99111-0003',end:DESTS[2].a,retorno:true,status:'concluido',motoboy:'Entregador1',valor:6,vMb:5,taxa:1,dest:DESTS[2],p0:MB_POS['Entregador1'],prog:1,hora:'13:10'}
  ],
  extrato:[
   {dia:'hoje',hora:'14:27',tipo:'entrega',desc:'Entrega #968474',valor:-6},
@@ -190,10 +190,10 @@ const S={
   {dia:'ontem',hora:'18:02',tipo:'deposito',desc:'Depósito via Pix',valor:50},
   {dia:'ontem',hora:'12:40',tipo:'entrega',desc:'Entrega #968402',valor:-6}
  ],
- pix:[{id:1,nome:'JOAO P SILVA',doc:'***.452.118-**',valor:30,hora:'09:12'},{id:2,nome:'MERCEARIA SANTOS ME',doc:'**.114.220/****-**',valor:100,hora:'11:47'}],
+ pix:[{id:1,nome:'PAGADOR 1',doc:'***.452.118-**',valor:30,hora:'09:12'},{id:2,nome:'PAGADOR 2',doc:'**.114.220/****-**',valor:100,hora:'11:47'}],
  audit:[
-  {t:'14:27',quem:'Bruna Sousa Doces',acao:'Criou o pedido #968474'},
-  {t:'14:02',quem:'Dono',acao:'Aprovou o cadastro de Carlos Lima'},
+  {t:'14:27',quem:'Lojista1',acao:'Criou o pedido #968474'},
+  {t:'14:02',quem:'Dono',acao:'Aprovou o cadastro de Entregador2'},
   {t:'11:47',quem:'Sistema',acao:'Pix de R$ 100,00 recebido sem identificação'},
   {t:'09:12',quem:'Sistema',acao:'Pix de R$ 30,00 recebido sem identificação'}
  ],
@@ -201,7 +201,7 @@ const S={
  filtro:'Este mês',nextId:968475
 };
 const BRUNA=S.lojistas[0];
-const R={lojista:{tab:'entrega',sheet:null,blocked:null},motoboy:{tab:'inicio',me:'Carlos Lima',blocked:null},chefe:{tab:'inicio',me:'Joana Reis',blocked:null},dono:{tab:'painel',blocked:null}};
+const R={lojista:{tab:'entrega',sheet:null,blocked:null},motoboy:{tab:'inicio',me:'Entregador2',blocked:null},chefe:{tab:'inicio',me:'Entregador3',blocked:null},dono:{tab:'painel',blocked:null}};
 let role='lojista';
 const log=(quem,acao)=>S.audit.unshift({t:hora(),quem,acao});
 const ativas=()=>S.orders.filter(o=>ATIVOS.includes(o.status));
@@ -335,7 +335,7 @@ function lojistaView(){
  }
  let sheet='';
  if(st.sheet)sheet=lojistaSheet(st.sheet);
- return phone(body,'lojista',[['entrega','send','Entrega'],['resultados','bars','Resultados']],sheet,true,'BS');
+ return phone(body,'lojista',[['entrega','send','Entrega'],['resultados','bars','Resultados']],sheet,true,'L1');
 }
 function ordRow(o,act){
  const [l,c]=ST[o.status];
@@ -346,7 +346,7 @@ function lojistaSheet(sh){
   return `<div class="sheet"><div class="in"><div class="grab"></div><div class="row sp"><h2 style="font-size:19px">Nova entrega</h2><button data-act="fechar" class="mut">${ic('x',20)}</button></div>
   <label>Endereço de entrega</label><input type="text" id="f-end" list="dl" placeholder="Digite rua, número e bairro"><datalist id="dl">${DESTS.map(d=>`<option value="${d.a}">`).join('')}</datalist>
   <div class="mut small" style="margin-top:5px">Na versão final: busca de endereço no mapa, com pino ajustável.</div>
-  <label>Nome do cliente</label><input type="text" id="f-cli" placeholder="Ex.: Maria Souza">
+  <label>Nome do cliente</label><input type="text" id="f-cli" placeholder="Ex.: Cliente4">
   <label>Telefone do cliente</label><input type="tel" id="f-tel" placeholder="(34) 9 0000-0000">
   <label>Observação</label><input type="text" id="f-obs" placeholder="Ex.: portão azul, tocar a campainha">
   <label class="row" style="gap:10px;margin-top:14px;color:var(--txt);font-size:14px"><input type="checkbox" id="f-ret" style="width:18px;height:18px"> O motoboy deve retornar à loja (ex.: maquininha)</label>
@@ -384,7 +384,7 @@ function motoboyView(r){
    const [l,c]=ST[mine.status];
    const lbl={aceito:'Cheguei na loja',aguardando:'Coletei o pedido',em_rota:'Entreguei (foto opcional)',retornando:'Retornei à loja'}[mine.status];
    body=`<div class="mapwrap">${mapSVG([mine])}<div class="chips"><div class="chip" style="flex:1;text-align:left;padding:10px 12px"><div class="row sp"><b style="font-size:15px">Corrida #${mine.id}</b><span class="pill" style="background:${c}22;color:${c}">${l}</span></div></div></div></div>
-   <div class="pad"><div class="card"><div class="mut small">${mine.status==='aceito'||mine.status==='aguardando'?'Coletar em':'Entregar em'}</div><b>${mine.status==='aceito'||mine.status==='aguardando'?'Bruna Sousa Doces - Rua Central, 100':mine.end}</b>
+   <div class="pad"><div class="card"><div class="mut small">${mine.status==='aceito'||mine.status==='aguardando'?'Coletar em':'Entregar em'}</div><b>${mine.status==='aceito'||mine.status==='aguardando'?'Lojista1 - Rua Central, 100':mine.end}</b>
    <div class="mut small" style="margin-top:8px">Cliente</div><b>${mine.cliente}</b>${mine.obs?`<div class="mut small" style="margin-top:6px">Obs.: ${mine.obs}</div>`:''}${mine.retorno?'<div class="small" style="margin-top:6px;color:var(--amber)">Retornar à loja depois de entregar</div>':''}
    <div class="row sp" style="margin-top:10px"><span class="mut">Você recebe</span><b class="pos">${brl(mine.vMb)}</b></div></div>
    <button class="btn block" style="margin-top:12px" data-act="etapa" data-arg="${mine.id}">${lbl}</button>
@@ -395,12 +395,12 @@ function motoboyView(r){
    body=`<div class="pad"><div class="card row sp"><div><b>${m.online?'Você está online':'Você está offline'}</b><div class="mut small">${m.online?'Recebendo pedidos próximos':'Ligue para receber pedidos'}</div></div><button class="btn sm ${m.online?'green':''}" data-act="online">${m.online?'Online':'Ficar online'}</button></div></div>
    <div class="mapwrap" style="margin-top:-6px">${mapSVG([],{idle:true})}</div>
    <div class="pad"><div class="row sp"><b>Pedidos disponíveis</b><span class="mut small">${m.online?disp.length:0}</span></div>
-   ${m.online&&disp.length?disp.map(o=>`<div class="card" style="margin-top:8px"><div class="row sp"><b>#${o.id}</b><b class="pos">${brl(o.vMb)}</b></div><div class="mut small" style="margin-top:4px">Coleta: Bruna Sousa Doces · 0,${(o.id%7)+3} km de você</div><div class="mut small">Entrega: ${o.end}</div>${o.retorno?'<div class="small" style="color:var(--amber)">Com retorno</div>':''}<button class="btn block" style="margin-top:10px" data-act="aceitar" data-arg="${o.id}">Aceitar corrida</button></div>`).join(''):`<div class="card mut" style="margin-top:8px;text-align:center">${m.online?'Nenhum pedido no momento. Peça uma entrega na aba Lojista.':'Fique online para ver os pedidos.'}</div>`}</div>`;
+   ${m.online&&disp.length?disp.map(o=>`<div class="card" style="margin-top:8px"><div class="row sp"><b>#${o.id}</b><b class="pos">${brl(o.vMb)}</b></div><div class="mut small" style="margin-top:4px">Coleta: Lojista1 · 0,${(o.id%7)+3} km de você</div><div class="mut small">Entrega: ${o.end}</div>${o.retorno?'<div class="small" style="color:var(--amber)">Com retorno</div>':''}<button class="btn block" style="margin-top:10px" data-act="aceitar" data-arg="${o.id}">Aceitar corrida</button></div>`).join(''):`<div class="card mut" style="margin-top:8px;text-align:center">${m.online?'Nenhum pedido no momento. Peça uma entrega na aba Lojista.':'Fique online para ver os pedidos.'}</div>`}</div>`;
   }
  }
  if(t==='ganhos'){
   const fin=S.orders.filter(o=>o.motoboy===me&&o.status==='concluido');
-  body=`<div class="pad"><h2>Meus ganhos</h2><div class="grid g2" style="margin-top:14px"><div class="card"><div class="mut small">A receber</div><div class="bal" style="font-size:28px">${brl(S.repasse[me]||0)}</div></div><div class="card"><div class="mut small">Já pago (mês)</div><div class="bal" style="font-size:28px">${brl(me==='Carlos Lima'?120:80)}</div></div></div>
+  body=`<div class="pad"><h2>Meus ganhos</h2><div class="grid g2" style="margin-top:14px"><div class="card"><div class="mut small">A receber</div><div class="bal" style="font-size:28px">${brl(S.repasse[me]||0)}</div></div><div class="card"><div class="mut small">Já pago (mês)</div><div class="bal" style="font-size:28px">${brl(me==='Entregador2'?120:80)}</div></div></div>
   <div class="card" style="margin-top:12px"><b>Corridas de hoje</b>${fin.length?fin.map(o=>`<div class="tx row sp"><div><b>#${o.id}</b><div class="mut small">${o.hora} · ${o.end}</div></div><b class="pos">+ ${brl(o.vMb)}</b></div>`).join(''):'<div class="mut" style="padding:14px 0">Nenhuma corrida concluída ainda.</div>'}</div>
   <div class="mut small" style="margin-top:10px;line-height:1.5">O pagamento é feito pelo dono por Pix, na sua chave cadastrada.</div></div>`;
  }
